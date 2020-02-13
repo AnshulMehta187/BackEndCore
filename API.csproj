@@ -9,18 +9,22 @@
     <Compile Remove="Models\**" />
     <Compile Remove="Repository\**" />
     <Compile Remove="Service\**" />
+    <Compile Remove="Utilties\**" />
     <Content Remove="DTO\**" />
     <Content Remove="Models\**" />
     <Content Remove="Repository\**" />
     <Content Remove="Service\**" />
+    <Content Remove="Utilties\**" />
     <EmbeddedResource Remove="DTO\**" />
     <EmbeddedResource Remove="Models\**" />
     <EmbeddedResource Remove="Repository\**" />
     <EmbeddedResource Remove="Service\**" />
+    <EmbeddedResource Remove="Utilties\**" />
     <None Remove="DTO\**" />
     <None Remove="Models\**" />
     <None Remove="Repository\**" />
     <None Remove="Service\**" />
+    <None Remove="Utilties\**" />
   </ItemGroup>
 
   <ItemGroup>
