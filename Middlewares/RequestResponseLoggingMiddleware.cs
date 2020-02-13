@@ -82,20 +82,37 @@ namespace API.Middlewares
             await _next(context);
 
             context.Response.Body.Seek(0, SeekOrigin.Begin);
-            var text = await new StreamReader(context.Response.Body).ReadToEndAsync();
-            context.Response.Body.Seek(0, SeekOrigin.Begin);
-            await FormatResponse(context, relationGuid);
-            _logger.LogInformation($"Http Response Information:{Environment.NewLine}" +
-                                   $"RelationID: { relationGuid}" +
-                                   $"Schema:{context.Request.Scheme} " +
-                                   $"Host: {context.Request.Host} " +
-                                   $"Path: {context.Request.Path} " +
-                                   $"QueryString: {context.Request.QueryString} " +
-                                   $"Response Body: {text}");
+            try
+            {
+                await _next(context);
 
-            await responseBody.CopyToAsync(originalBodyStream);
+                var text = await new StreamReader(context.Response.Body).ReadToEndAsync();
+                context.Response.Body.Seek(0, SeekOrigin.Begin);
+                await FormatResponse(context, relationGuid);
+                _logger.LogInformation($"Http Response Information:{Environment.NewLine}" +
+                                       $"RelationID: { relationGuid}" +
+                                       $"Schema:{context.Request.Scheme} " +
+                                       $"Host: {context.Request.Host} " +
+                                       $"Path: {context.Request.Path} " +
+                                       $"QueryString: {context.Request.QueryString} " +
+                                       $"Response Body: {text}");
+
+                await responseBody.CopyToAsync(originalBodyStream);
+            }
+            catch (Exception ex)
+            {
+                await HandleExceptions(context, ex);
+            }
+
         }
-
+        private Task HandleExceptions(HttpContext context, Exception ex)
+        {
+            _logger.LogError($"HttpContext details: {context}");
+            _logger.LogError($"Exception details: {ex}");
+            var apiResponse = new Response(StatusCode.ApiError, ex.Message + ex.StackTrace);
+            var json = JsonConvert.SerializeObject(apiResponse, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return context.Response.WriteAsync(json);
+        }
         private Task FormatResponse(HttpContext context, Guid relationGuid)
         {
             context.Response.ContentType = "application/json";
