@@ -20,7 +20,7 @@ namespace ReviseBackEndApp
 
         public Startup()
         {
-            
+
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile(path: "appsettings.json", optional: false, reloadOnChange: true)
@@ -36,7 +36,7 @@ namespace ReviseBackEndApp
             Log.Information("API started running");
         }
 
-        
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -49,7 +49,7 @@ namespace ReviseBackEndApp
             });
             #endregion
             services
-            .AddDbContext<TestContext>(options => 
+            .AddDbContext<TestContext>(options =>
                options.UseLazyLoadingProxies()
                .UseSqlServer(connectionString: Configuration.GetConnectionString("Test"))
                );
@@ -60,7 +60,7 @@ namespace ReviseBackEndApp
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env,ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             if (env.IsDevelopment())
             {
@@ -83,9 +83,11 @@ namespace ReviseBackEndApp
 
             ); ;
 
-          //  app.UseResponseWrapperMiddleWare();
-
             app.UseRequestResponseLoggingMiddleware();
+
+            app.UseResponseWrapperMiddleWare();
+
+            
 
             app.UseHttpsRedirection();
 

@@ -1,6 +1,7 @@
 ﻿using Models.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DTO
@@ -28,7 +29,7 @@ namespace DTO
 
         public IEnumerable<StudentDetailsDto> ToDto(IEnumerable<Student> entities)
         {
-            throw new NotImplementedException();
+            return entities.Select(ToDto).ToList();
         }
 
         public Student ToEntity(StudentDetailsDto dto)

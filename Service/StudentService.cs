@@ -19,9 +19,20 @@ namespace Service
             _studentDetailMapper = studentDetailMapper;
         }
 
-        public StudentDetailsDto GetStudentInformation(int studentId)
+        public Response GetStudentInformation(int studentId)
         {
-            return _studentRepository.GetStudentInformation(studentId);
+            var student =  _studentRepository.GetStudentInformation(studentId);
+
+            return student == null ?
+                new Response(StatusCode.NotFound, $"Student  with  id {studentId} not found") :  new Response(StatusCode.Success, _studentDetailMapper.ToDto(student));
+        }
+
+        public Response GetStudentList()
+        {
+            var student = _studentRepository.GetStudentList();
+
+            return student == null ?
+                new Response(StatusCode.NotFound, $"Students details not found") : new Response(StatusCode.Success, _studentDetailMapper.ToDto(student.ToList()));
         }
 
         public Response SaveStudent(StudentDetailsDto studentDetailsDto)
@@ -30,7 +41,7 @@ namespace Service
             _studentRepository.Add(studentModel);
             var result = _studentRepository.Save();
             return result > 0 ?
-                new Response(StatusCode.Success, _studentDetailMapper.ToDto(studentModel)) :
+                new Response(StatusCode.Success,"Data Saved successfully", _studentDetailMapper.ToDto(studentModel)) :
                 new Response(StatusCode.Failure);
 
         }

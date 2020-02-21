@@ -11,23 +11,16 @@ namespace Repository
             : base(testContext)
         {
         }
-        StudentDetailsDto IStudentRepository.GetStudentInformation(int studentId)
+
+        public IQueryable<Student> GetStudentList()
         {
-            var studentInfo = (from student in testContext.Student
-                               where student.Id == studentId
-                               select new StudentDetailsDto
-                               {
-                                   DateofBirth = student.DateofBirth,
-                                   FirstName = student.FirstName,
-                                   LastName = student.LastName,
-                                   Gender = student.Gender,
-                                   StudentAdditionalInformation = new StudentAdditionalInformationDto
-                                   {
-                                       BatchName = student.StudentDetails != null ? student.StudentDetails.BatchName : string.Empty,
-                                       IsBatchHolder = student.StudentDetails != null ? student.StudentDetails.IsBatchHolder : false,
-                                       Grade = student.StudentDetails != null ? student.StudentDetails.Grade : string.Empty,
-                                   }
-                               }).FirstOrDefault();
+            var student = from data in testContext.Student.AsQueryable() select data;
+            return student;
+        }
+        Student IStudentRepository.GetStudentInformation(int studentId)
+        {
+            var studentInfo =  testContext.Student.Where(x => x.Id == studentId).FirstOrDefault();
+
             return studentInfo;
         }
     }

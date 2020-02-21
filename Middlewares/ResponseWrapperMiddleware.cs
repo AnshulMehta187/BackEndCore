@@ -30,6 +30,10 @@ namespace API.Middlewares
             try
             {
                 await _next(context);
+                if (context.Response.StatusCode != (int)HttpStatusCode.OK)
+                {
+                    await FormatResponse(context);
+                }
             }
             catch (Exception ex)
             {
@@ -39,10 +43,42 @@ namespace API.Middlewares
         }
         private Task HandleExceptions(HttpContext context, Exception ex)
         {
-            _logger.LogError($"HttpContext details: {context}");
+            Guid relationId = Guid.NewGuid();
+            _logger.LogError($"HttpContext details: {context}" +
+                             $"Relation ID : {relationId}");
             _logger.LogError($"Exception details: {ex}");
-            var apiResponse = new Response(StatusCode.ApiError, ex.Message + ex.StackTrace);
+            context.Response.Clear();
+
+            context.Response.ContentType = "application/json";
+            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
+            context.Response.StatusCode = (int)StatusCode.Failure;
+            var apiResponse = new Response(StatusCode.Failure , relationId  + "  " + ex.Message);
             var json = JsonConvert.SerializeObject(apiResponse, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+            return context.Response.WriteAsync(json);
+        }
+
+        private Task FormatResponse(HttpContext context)
+        {
+            context.Response.ContentType = "application/json";
+            string message;
+            switch (context.Response.StatusCode)
+            {
+                case (int)HttpStatusCode.NotFound:
+                    message = "The specified URI does not exist. Please verify and try again.";
+                    break;
+                case (int)HttpStatusCode.NoContent:
+                    message = "The specified URI does not contain any content.";
+                    break;
+                default:
+                    message = "Your request cannot be processed. Please contact a support.";
+                    break;
+            }
+
+            Response apiResponse = new Response(StatusCode.Failure, message);
+
+            var json = JsonConvert.SerializeObject(apiResponse, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
+
             return context.Response.WriteAsync(json);
         }
     }

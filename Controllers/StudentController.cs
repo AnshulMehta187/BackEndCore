@@ -19,7 +19,7 @@ namespace API.Controllers
             
         }
         [HttpGet]
-        public StudentDetailsDto GetStudentDetails(int studentId)
+        public Response GetStudentDetails(int studentId)
         {
             return _studentService.GetStudentInformation(studentId);
         }
@@ -28,6 +28,12 @@ namespace API.Controllers
         public Response Save([FromBody] StudentDetailsDto studentDetailsDto)
         {
             return  _studentService.SaveStudent(studentDetailsDto);
+        }
+
+        [HttpGet("GetStudents")]
+        public Response GetStudentList()
+        {
+            return _studentService.GetStudentList();
         }
     }
 }

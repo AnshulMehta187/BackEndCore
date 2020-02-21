@@ -82,11 +82,13 @@ namespace API.Middlewares
             await _next(context);
 
             context.Response.Body.Seek(0, SeekOrigin.Begin);
-            await _next(context);
 
             var text = await new StreamReader(context.Response.Body).ReadToEndAsync();
+
             context.Response.Body.Seek(0, SeekOrigin.Begin);
-            await FormatResponse(context, relationGuid);
+
+            
+
             _logger.LogInformation($"Http Response Information:{Environment.NewLine}" +
                                    $"RelationID: { relationGuid}" +
                                    $"Schema:{context.Request.Scheme} " +
@@ -98,40 +100,7 @@ namespace API.Middlewares
             await responseBody.CopyToAsync(originalBodyStream);
 
         }
-        private Task FormatResponse(HttpContext context, Guid relationGuid)
-        {
-            context.Response.ContentType = "application/json";
-            string message;
-            switch (context.Response.StatusCode)
-            {
-                case (int)HttpStatusCode.NotFound:
-                    message = relationGuid + "The specified URI does not exist. Please verify and try again.";
-                    break;
-                case (int)HttpStatusCode.NoContent:
-                    message = relationGuid + "The specified URI does not contain any content.";
-                    break;
-                case (int)HttpStatusCode.OK:
-                    message = relationGuid + "The request was processed successfully";
-                    break;
-                default:
-                    message = relationGuid + "Your request cannot be processed. Please contact a support.";
-                    break;
-            }
-            Response apiResponse;
-            if (context.Response.StatusCode != (int)HttpStatusCode.OK)
-            {
-                apiResponse = new Response(StatusCode.Failure, message);
-            }
-            else
-            {
-                apiResponse = new Response(StatusCode.Failure, message);
-            }
-
-
-            var json = JsonConvert.SerializeObject(apiResponse, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() });
-
-            return context.Response.WriteAsync(json);
-        }
+        
     }
 
     public static class LogWrapperMiddleWareExtensions

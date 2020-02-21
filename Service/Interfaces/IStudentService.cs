@@ -6,8 +6,10 @@ namespace Service.Interfaces
 {
     public interface IStudentService : IService
     {
-        StudentDetailsDto GetStudentInformation(int studentId);
+        Response GetStudentInformation(int studentId);
 
         Response SaveStudent(StudentDetailsDto studentDetailsDto);
+
+        Response GetStudentList();
     }
 }
