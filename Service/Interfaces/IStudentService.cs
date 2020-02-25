@@ -11,5 +11,8 @@ namespace Service.Interfaces
         Response SaveStudent(StudentDetailsDto studentDetailsDto);
 
         Response GetStudentList();
+
+        Response GetNothing();
+
     }
 }

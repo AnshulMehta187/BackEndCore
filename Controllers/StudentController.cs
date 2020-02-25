@@ -35,5 +35,11 @@ namespace API.Controllers
         {
             return _studentService.GetStudentList();
         }
+
+        [HttpGet("GetNothing")]
+        public Response DoNothing()
+        {
+            return _studentService.GetNothing();
+        }
     }
 }

@@ -30,7 +30,15 @@ namespace Service
         public Response GetStudentList()
         {
             var student = _studentRepository.GetStudentList();
+            System.Threading.Thread.Sleep(8000);
+            return student == null ?
+                new Response(StatusCode.NotFound, $"Students details not found") : new Response(StatusCode.Success, _studentDetailMapper.ToDto(student.ToList()));
+        }
 
+        public Response GetNothing()
+        {
+            var student = _studentRepository.GetStudentList();
+            System.Threading.Thread.Sleep(1000);
             return student == null ?
                 new Response(StatusCode.NotFound, $"Students details not found") : new Response(StatusCode.Success, _studentDetailMapper.ToDto(student.ToList()));
         }
