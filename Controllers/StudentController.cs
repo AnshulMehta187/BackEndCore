@@ -15,10 +15,11 @@ namespace API.Controllers
 
         public StudentController(IStudentService studentService)
         {
+            
             _studentService = studentService;
             
         }
-        [HttpGet]
+        [HttpGet("GetStudent/{studentId}")]
         public Response GetStudentDetails(int studentId)
         {
             return _studentService.GetStudentInformation(studentId);

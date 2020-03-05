@@ -19,6 +19,7 @@ namespace DTO
                 StudentId = entity.Id,
                 StudentAdditionalInformation = new StudentAdditionalInformationDto
                 {
+                    Grade = entity.StudentDetails.Grade,
                     BatchName = entity.StudentDetails.BatchName,
                     IsBatchHolder = entity.StudentDetails.IsBatchHolder,
                     StudentAdditionalId = entity.StudentDetails.Id,
